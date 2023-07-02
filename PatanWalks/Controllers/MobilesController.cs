@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PatanWalks.Models.Sample;
 
 namespace PatanWalks.Controllers
@@ -41,15 +40,54 @@ namespace PatanWalks.Controllers
         [HttpGet("{id}")]
         public ActionResult<MobileModel> Get(int id)
         {
-            MobileModel mobile =  Mobiles.FirstOrDefault(m => m.Id == id);
-            if(mobile == null)
+            MobileModel mobile = Mobiles.FirstOrDefault(m => m.Id == id);
+            if (mobile == null)
             {
-                return NotFound(new {Messsage = "Mobile Not Found with that ID."});
+                return NotFound(new { Messsage = "Mobile Not Found with that ID." });
             }
             return Ok(mobile);
         }
 
+        [HttpPost]
+        public ActionResult<IEnumerable<MobileModel>> Post(MobileModel mobileNew)
+        {
+            Mobiles.Add(mobileNew);
+            return Ok(Mobiles);
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult<IEnumerable<MobileModel>> Put(int id, MobileModel mobileUpdated)
+        {
+            foreach(MobileModel m in Mobiles)
+            {
+                if(m.Id == id)
+                {
+                    m.Name = mobileUpdated.Name;
+                    m.Price = mobileUpdated.Price;
+                    m.Color = mobileUpdated.Color;
+                    m.Description = mobileUpdated.Description;
+                    return Ok(Mobiles);
+                }
+                
+            }
+            return NotFound(new { Message = "For the Updation Id not Matched ." });
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult<IEnumerable<MobileModel>> Delete(int id, MobileModel mobileUpdated)
+        {
+            foreach (MobileModel m in Mobiles)
+            {
+                if (m.Id == id)
+                {
+                    Mobiles.Remove(m);
+                    return Ok(Mobiles);
+                }
+
+            }
+            return NotFound(new { Message = "For the Deletion Id not Matched ." });
+        }
     }
-    
+
 
 }
