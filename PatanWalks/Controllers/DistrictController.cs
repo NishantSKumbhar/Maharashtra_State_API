@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PatanWalks.Data;
 using PatanWalks.Models.Domain;
 using PatanWalks.Models.DTO;
+using System.Data.OleDb;
 
 namespace PatanWalks.Controllers
 {
@@ -108,6 +109,55 @@ namespace PatanWalks.Controllers
             };
 
             return CreatedAtAction(nameof(GetDistrictById), new { id = districtDto.Id }, districtDto);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateDistrictDTO updatedDistrict)
+        {
+            var districtModel = dbContext.Districts.FirstOrDefault(x => x.Id == id);
+
+            if(districtModel == null)
+            {
+                return NotFound();
+            }
+
+            districtModel.Name = updatedDistrict.Name;
+            districtModel.Description = updatedDistrict.Description;
+            districtModel.AreaInSqKm = updatedDistrict.AreaInSqKm;
+            districtModel.DistrictImageUrl = updatedDistrict.DistrictImageUrl;
+            districtModel.DivisionId = updatedDistrict.DivisionId;
+            districtModel.PopulationId = updatedDistrict.PopulationId;
+
+            dbContext.SaveChanges();
+
+            var DistrictDTO = new DistrictDTO
+            {
+                Id = districtModel.Id,
+                Name = districtModel.Name,
+                Description = districtModel.Description,
+                DistrictImageUrl = districtModel.DistrictImageUrl,
+                DivisionId = updatedDistrict.DivisionId,
+                PopulationId = updatedDistrict.PopulationId,
+                AreaInSqKm = districtModel.AreaInSqKm
+            };
+            // Always pass DTO , Not Domain Model
+            return Ok(DistrictDTO);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete([FromRoute] Guid id)
+        {
+            var districtModel = dbContext.Districts.FirstOrDefault(x => x.Id == id);
+            if(districtModel == null)
+            {
+                return NotFound();
+            }
+
+            dbContext.Districts.Remove(districtModel);
+            dbContext.SaveChanges();
+
+            // you can return deleted object
+            return Ok();
         }
     }
 }
