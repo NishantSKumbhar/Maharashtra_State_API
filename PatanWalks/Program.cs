@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PatanWalks.Data;
+using PatanWalks.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MaharashtraDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("MaharashtraConnectionString")));
+
+builder.Services.AddScoped<IDivisionRepository, SQLDivisionRepository>();
 
 var app = builder.Build();
 

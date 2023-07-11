@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PatanWalks.Data;
 using PatanWalks.Models.Domain;
 using PatanWalks.Models.DTO;
+using PatanWalks.Repositories;
 
 namespace PatanWalks.Controllers
 {
@@ -12,17 +13,19 @@ namespace PatanWalks.Controllers
     public class DivisionController : ControllerBase
     {
         private readonly MaharashtraDbContext maharashtraDbContext;
-        public DivisionController(MaharashtraDbContext maharashtraDbContext)
+        private readonly IDivisionRepository divisionRepository;
+        public DivisionController(MaharashtraDbContext maharashtraDbContex, IDivisionRepository divisionRepo)
         {
             this.maharashtraDbContext = maharashtraDbContext;
+            this.divisionRepository = divisionRepo;
         }
         [HttpGet]
         public async Task<ActionResult<List<DivisionGetDTO>>> GetAllDivisions()  // change due to async
         {
             var DivisionDTO = new List<DivisionGetDTO>();
 
-            var Divisions = await maharashtraDbContext.Divisions.ToListAsync();// change due to async
-
+            //var Divisions = await maharashtraDbContext.Divisions.ToListAsync();// change due to async
+            var Divisions = await divisionRepository.GetAllAsyncDivisions();
             foreach (var Division in Divisions) 
             {
                 DivisionDTO.Add(new DivisionGetDTO
