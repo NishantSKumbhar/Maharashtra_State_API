@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PatanWalks.Data;
@@ -14,28 +15,32 @@ namespace PatanWalks.Controllers
     {
         private readonly MaharashtraDbContext maharashtraDbContext;
         private readonly IDivisionRepository divisionRepository;
-        public DivisionController(MaharashtraDbContext maharashtraDbContex, IDivisionRepository divisionRepo)
+        private readonly IMapper mapper;
+        public DivisionController(MaharashtraDbContext maharashtraDbContex, IDivisionRepository divisionRepo, IMapper mapper)
         {
             this.maharashtraDbContext = maharashtraDbContext;
             this.divisionRepository = divisionRepo;
+            this.mapper = mapper;
         }
         [HttpGet]
         public async Task<ActionResult<List<DivisionGetDTO>>> GetAllDivisions()  // change due to async
         {
-            var DivisionDTO = new List<DivisionGetDTO>();
+            //var DivisionDTO = new List<DivisionGetDTO>();
 
             //var Divisions = await maharashtraDbContext.Divisions.ToListAsync();// change due to async
             var Divisions = await divisionRepository.GetAllDivisionsAsync();
-            foreach (var Division in Divisions) 
-            {
-                DivisionDTO.Add(new DivisionGetDTO
-                {
-                    Name= Division.Name,
-                    Code = Division.Code,
-                    DivisionImageUrl= Division.DivisionImageUrl
-                });
-            }
+            //foreach (var Division in Divisions) 
+            //{
+            //    DivisionDTO.Add(new DivisionGetDTO
+            //    {
+            //        Name= Division.Name,
+            //        Code = Division.Code,
+            //        DivisionImageUrl= Division.DivisionImageUrl
+            //    });
+            //}
 
+            //Mapping Domain Models to DTO
+            var DivisionDTO = mapper.Map<List<DivisionGetDTO>>(Divisions);
             return Ok(DivisionDTO);
         }
 

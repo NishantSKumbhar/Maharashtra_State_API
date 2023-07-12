@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PatanWalks.Data;
+using PatanWalks.Mappings;
 using PatanWalks.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("MaharashtraConne
 
 builder.Services.AddScoped<IDivisionRepository, SQLDivisionRepository>();
 
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
