@@ -25,7 +25,7 @@ namespace PatanWalks.Controllers
             var DivisionDTO = new List<DivisionGetDTO>();
 
             //var Divisions = await maharashtraDbContext.Divisions.ToListAsync();// change due to async
-            var Divisions = await divisionRepository.GetAllAsyncDivisions();
+            var Divisions = await divisionRepository.GetAllDivisionsAsync();
             foreach (var Division in Divisions) 
             {
                 DivisionDTO.Add(new DivisionGetDTO
@@ -42,7 +42,7 @@ namespace PatanWalks.Controllers
         [HttpGet("{id}")]
         public async  Task<ActionResult<DivisionGetDTO>> GetDivisionByID(Guid id) // change due to async
         {
-            var division = await maharashtraDbContext.Divisions.FindAsync(id);// change due to async
+            var division = await divisionRepository.GetDivisionByIdAsync(id);// change due to async
 
             if (division == null)
             {
@@ -68,14 +68,14 @@ namespace PatanWalks.Controllers
                 DivisionImageUrl= newDivision.DivisionImageUrl
             };
 
-            await maharashtraDbContext.Divisions.AddAsync(divisionModel);// change due to async
-            await maharashtraDbContext.SaveChangesAsync();// change due to async
+            var division = await divisionRepository.PostDivisionAsync(divisionModel);// change due to async
+            //await maharashtraDbContext.SaveChangesAsync();// change due to async
 
             var divisionDTO = new DivisionGetDTO()
             {
-                Name = divisionModel.Name,
-                Code = divisionModel.Code,
-                DivisionImageUrl= divisionModel.DivisionImageUrl
+                Name = division.Name,
+                Code = division.Code,
+                DivisionImageUrl= division.DivisionImageUrl
             };
 
             return CreatedAtAction(nameof(GetDivisionByID), new { id = divisionModel.Id }, divisionDTO);
@@ -84,16 +84,22 @@ namespace PatanWalks.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<DivisionGetDTO>> UpdateDivision([FromRoute] Guid id, [FromBody] DivisionPutDTO updatedDivision)// change due to async
         {
-            var division = await maharashtraDbContext.Divisions.FirstOrDefaultAsync(x => x.Id == id);// change due to async
+            var divisionModel = new Division
+            {
+                Code = updatedDivision.Code,
+                Name = updatedDivision.Name,
+                DivisionImageUrl = updatedDivision.DivisionImageUrl
+            };
+            var division = await divisionRepository.UpdateDivisionAsync(id, divisionModel);// change due to async
             if (division == null)
             {
                 return NotFound();
             }
-            division.Name = updatedDivision.Name;
-            division.Code = updatedDivision.Code;
-            division.DivisionImageUrl = updatedDivision.DivisionImageUrl;
+            //division.Name = updatedDivision.Name;
+            //division.Code = updatedDivision.Code;
+            //division.DivisionImageUrl = updatedDivision.DivisionImageUrl;
 
-            await maharashtraDbContext.SaveChangesAsync();// change due to async
+            //await maharashtraDbContext.SaveChangesAsync();// change due to async
 
             var divisionDTO = new DivisionGetDTO()
             {
@@ -107,7 +113,7 @@ namespace PatanWalks.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<DivisionGetDTO>> DeleteDivision([FromRoute] Guid id)// change due to async
         {
-            var division = await maharashtraDbContext.Divisions.FirstOrDefaultAsync(x => x.Id == id);// change due to async
+            var division = await divisionRepository.DeleteDivisionAsync(id);// change due to async
             if (division == null)
             {
                 return NotFound();
@@ -118,8 +124,8 @@ namespace PatanWalks.Controllers
                 Code = division.Code,
                 DivisionImageUrl= division.DivisionImageUrl
             };
-            maharashtraDbContext.Divisions.Remove(division);
-            await maharashtraDbContext.SaveChangesAsync();// change due to async
+            //maharashtraDbContext.Divisions.Remove(division);
+            //await maharashtraDbContext.SaveChangesAsync();// change due to async
             return Ok(divisionDTO);
         }
 
