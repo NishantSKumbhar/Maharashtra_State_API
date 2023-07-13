@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
@@ -14,18 +15,20 @@ namespace PatanWalks.Controllers
     public class DistrictController : ControllerBase
     {
         private readonly MaharashtraDbContext dbContext;
-        public DistrictController(MaharashtraDbContext dbContext)
+        private readonly IMapper mapper;
+        public DistrictController(MaharashtraDbContext dbContext, IMapper mapper)
         {
-             this.dbContext = dbContext;
+            this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<District>> GetDistricts()
+        public async  Task<ActionResult<IEnumerable<District>>> GetDistricts()
         {
             // Make DTO
             var districtDTO = new List<DistrictDTO>();
 
-            var districts = dbContext.Districts.ToList();
+            var districts = await dbContext.Districts.ToListAsync();
 
 
             // Map the DTO
@@ -81,21 +84,22 @@ namespace PatanWalks.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] DistrictDTO addDistrictDTO) 
+        public async Task<IActionResult> Create([FromBody] DistrictPostDTO addDistrictDTO) 
         {
-            var districtModel = new District
-            {
-                
-                Name = addDistrictDTO.Name,
-                Description = addDistrictDTO.Description,
-                DistrictImageUrl = addDistrictDTO.DistrictImageUrl,
-                AreaInSqKm = addDistrictDTO.AreaInSqKm,
-                DivisionId = addDistrictDTO.DivisionId,
-                PopulationId = addDistrictDTO.PopulationId
-            };
+            //var districtModel = new District
+            //{
 
-            dbContext.Districts.Add(districtModel);
-            dbContext.SaveChanges();
+            //    Name = addDistrictDTO.Name,
+            //    Description = addDistrictDTO.Description,
+            //    DistrictImageUrl = addDistrictDTO.DistrictImageUrl,
+            //    AreaInSqKm = addDistrictDTO.AreaInSqKm,
+            //    DivisionId = addDistrictDTO.DivisionId,
+            //    PopulationId = addDistrictDTO.PopulationId
+            //};
+            var districtModel = mapper.Map<District>(addDistrictDTO);
+
+            await dbContext.Districts.AddAsync(districtModel);
+            await dbContext.SaveChangesAsync();
 
             var districtDto = new DistrictDTO
             {

@@ -9,6 +9,7 @@ namespace PatanWalks.Mappings
         public AutoMapperProfiles()
         {
             CreateMap<Division, DivisionGetDTO>().ReverseMap();
+            CreateMap<District, DistrictPostDTO>().ReverseMap();
         }
     }
 }
