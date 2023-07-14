@@ -36,54 +36,55 @@ namespace PatanWalks.Controllers
 
 
             // Map the DTO
-            foreach (var dis in districts)
-            {
-                districtDTO.Add(new DistrictDTO()
-                {
-                    Id = dis.Id,
-                    Name = dis.Name,
-                    Description = dis.Description,
-                    AreaInSqKm = dis.AreaInSqKm,
-                    DistrictImageUrl = dis.DistrictImageUrl,
-                    DivisionId = dis.DivisionId,
-                    PopulationId = dis.PopulationId
-                });
-            }
+            //foreach (var dis in districts)
+            //{
+            //    districtDTO.Add(new DistrictDTO()
+            //    {
+            //        Id = dis.Id,
+            //        Name = dis.Name,
+            //        Description = dis.Description,
+            //        AreaInSqKm = dis.AreaInSqKm,
+            //        DistrictImageUrl = dis.DistrictImageUrl,
+            //        DivisionId = dis.DivisionId,
+            //        PopulationId = dis.PopulationId
+            //    });
+            //} 
 
             // Return the DTO
 
-            return Ok(districtDTO);
+            //return Ok(districtDTO);
+            return Ok(mapper.Map<List<DistrictDTO>>(districts));
         }
 
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<DistrictDTO> GetDistrictById([FromRoute]Guid id)
+        public async Task<ActionResult<DistrictDTO>> GetDistrictById([FromRoute]Guid id)
         {
-           
 
 
-            var district = dbContext.Districts.Find(id);
 
+            //var district = dbContext.Districts.Find(id);
+            var district = await districtRepository.GetDistrictByIdAsync(id);
             // Above Find Method will take only primary key
             //var district = dbContext.Districts.FirstOrDefault(x => x.Id == id);
 
-            
+
             if (district == null) 
             {
                 return NotFound(new { Message = "District with that ID not Found."});
             }
 
-            var districtDTO = new DistrictDTO()
-            {
-                Id = district.Id,
-                Name = district.Name,
-                Description = district.Description,
-                AreaInSqKm = district.AreaInSqKm,
-                DistrictImageUrl = district.DistrictImageUrl,
-                DivisionId = district.DivisionId,
-                PopulationId = district.PopulationId
-            };
-
+            //var districtDTO = new DistrictDTO()
+            //{
+            //    Id = district.Id,
+            //    Name = district.Name,
+            //    Description = district.Description,
+            //    AreaInSqKm = district.AreaInSqKm,
+            //    DistrictImageUrl = district.DistrictImageUrl,
+            //    DivisionId = district.DivisionId,
+            //    PopulationId = district.PopulationId
+            //};
+            var districtDTO = mapper.Map<DistrictDTO>(district);
             return Ok(districtDTO);
         }
 
@@ -121,49 +122,50 @@ namespace PatanWalks.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateDistrictDTO updatedDistrict)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDistrictDTO updatedDistrict)
         {
-            var districtModel = dbContext.Districts.FirstOrDefault(x => x.Id == id);
+            var district = mapper.Map<District>(updatedDistrict);
+            var districtModel = await districtRepository.UpdateDistrictAsync(id, district);
 
             if(districtModel == null)
             {
                 return NotFound();
             }
 
-            districtModel.Name = updatedDistrict.Name;
-            districtModel.Description = updatedDistrict.Description;
-            districtModel.AreaInSqKm = updatedDistrict.AreaInSqKm;
-            districtModel.DistrictImageUrl = updatedDistrict.DistrictImageUrl;
-            districtModel.DivisionId = updatedDistrict.DivisionId;
-            districtModel.PopulationId = updatedDistrict.PopulationId;
+            //districtModel.Name = updatedDistrict.Name;
+            //districtModel.Description = updatedDistrict.Description;
+            //districtModel.AreaInSqKm = updatedDistrict.AreaInSqKm;
+            //districtModel.DistrictImageUrl = updatedDistrict.DistrictImageUrl;
+            //districtModel.DivisionId = updatedDistrict.DivisionId;
+            //districtModel.PopulationId = updatedDistrict.PopulationId;
 
-            dbContext.SaveChanges();
-
-            var DistrictDTO = new DistrictDTO
-            {
-                Id = districtModel.Id,
-                Name = districtModel.Name,
-                Description = districtModel.Description,
-                DistrictImageUrl = districtModel.DistrictImageUrl,
-                DivisionId = updatedDistrict.DivisionId,
-                PopulationId = updatedDistrict.PopulationId,
-                AreaInSqKm = districtModel.AreaInSqKm
-            };
+            //dbContext.SaveChanges();
+            var DistrictDTO = mapper.Map<DistrictDTO>(districtModel);
+            //var DistrictDTO = new DistrictDTO
+            //{
+            //    Id = districtModel.Id,
+            //    Name = districtModel.Name,
+            //    Description = districtModel.Description,
+            //    DistrictImageUrl = districtModel.DistrictImageUrl,
+            //    DivisionId = updatedDistrict.DivisionId,
+            //    PopulationId = updatedDistrict.PopulationId,
+            //    AreaInSqKm = districtModel.AreaInSqKm
+            //};
             // Always pass DTO , Not Domain Model
             return Ok(DistrictDTO);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var districtModel = dbContext.Districts.FirstOrDefault(x => x.Id == id);
+            var districtModel = await districtRepository.DeleteDistrictAsync(id);
             if(districtModel == null)
             {
                 return NotFound();
             }
 
-            dbContext.Districts.Remove(districtModel);
-            dbContext.SaveChanges();
+            //dbContext.Districts.Remove(districtModel);
+            //dbContext.SaveChanges();
 
             // you can return deleted object
             return Ok();

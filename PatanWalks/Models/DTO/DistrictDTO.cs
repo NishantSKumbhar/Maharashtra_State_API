@@ -12,7 +12,10 @@ namespace PatanWalks.Models.DTO
         public string? DistrictImageUrl { get; set; }
         public Guid DivisionId { get; set; }
         public Guid PopulationId { get; set; }
+        // Navigation Property
+        public Division Division { get; set; }
+        public Population Population { get; set; }
 
-        
+
     }
 }
