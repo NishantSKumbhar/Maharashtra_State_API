@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using PatanWalks.Data;
 using PatanWalks.Models.Domain;
 using PatanWalks.Models.DTO;
+using PatanWalks.Repositories;
 using System.Data.OleDb;
 
 namespace PatanWalks.Controllers
@@ -16,19 +17,22 @@ namespace PatanWalks.Controllers
     {
         private readonly MaharashtraDbContext dbContext;
         private readonly IMapper mapper;
-        public DistrictController(MaharashtraDbContext dbContext, IMapper mapper)
+        private readonly IDistrictRepository districtRepository;
+
+        public DistrictController(MaharashtraDbContext dbContext, IMapper mapper, IDistrictRepository districtRepository)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
+            this.districtRepository = districtRepository;
         }
 
         [HttpGet]
-        public async  Task<ActionResult<IEnumerable<District>>> GetDistricts()
+        public async  Task<ActionResult<List<DistrictDTO>>> GetDistricts()
         {
             // Make DTO
             var districtDTO = new List<DistrictDTO>();
 
-            var districts = await dbContext.Districts.ToListAsync();
+            var districts = await districtRepository.GetAllDistrictsAsync();
 
 
             // Map the DTO
@@ -98,19 +102,20 @@ namespace PatanWalks.Controllers
             //};
             var districtModel = mapper.Map<District>(addDistrictDTO);
 
-            await dbContext.Districts.AddAsync(districtModel);
-            await dbContext.SaveChangesAsync();
-
-            var districtDto = new DistrictDTO
-            {
-                Id = districtModel.Id,
-                Name = districtModel.Name,
-                Description = districtModel.Description,
-                DistrictImageUrl = districtModel.DistrictImageUrl,
-                AreaInSqKm = districtModel.AreaInSqKm,
-                DivisionId = districtModel.DivisionId,
-                PopulationId = districtModel.PopulationId
-            };
+            //await dbContext.Districts.AddAsync(districtModel);
+            //await dbContext.SaveChangesAsync();
+            var district = await districtRepository.PostDistrictAsync(districtModel);
+            var districtDto = mapper.Map<DistrictDTO>(district);
+            //var districtDto = new DistrictDTO
+            //{
+            //    Id = districtModel.Id,
+            //    Name = districtModel.Name,
+            //    Description = districtModel.Description,
+            //    DistrictImageUrl = districtModel.DistrictImageUrl,
+            //    AreaInSqKm = districtModel.AreaInSqKm,
+            //    DivisionId = districtModel.DivisionId,
+            //    PopulationId = districtModel.PopulationId
+            //};
 
             return CreatedAtAction(nameof(GetDistrictById), new { id = districtDto.Id }, districtDto);
         }

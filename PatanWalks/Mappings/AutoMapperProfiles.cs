@@ -10,6 +10,7 @@ namespace PatanWalks.Mappings
         {
             CreateMap<Division, DivisionGetDTO>().ReverseMap();
             CreateMap<District, DistrictPostDTO>().ReverseMap();
+            CreateMap<District, DistrictDTO>().ReverseMap();
         }
     }
 }

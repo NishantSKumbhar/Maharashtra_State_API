@@ -16,6 +16,7 @@ builder.Services.AddDbContext<MaharashtraDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("MaharashtraConnectionString")));
 
 builder.Services.AddScoped<IDivisionRepository, SQLDivisionRepository>();
+builder.Services.AddScoped<IDistrictRepository, SQLDistrictRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 var app = builder.Build();
