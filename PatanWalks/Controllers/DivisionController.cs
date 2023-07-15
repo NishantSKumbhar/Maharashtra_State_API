@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PatanWalks.Custom_Action_Filter;
 using PatanWalks.Data;
 using PatanWalks.Models.Domain;
 using PatanWalks.Models.DTO;
@@ -64,6 +65,7 @@ namespace PatanWalks.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<ActionResult> PostDivision([FromBody] DivisionPostDTO newDivision)// change due to async
         {
             if (ModelState.IsValid)
@@ -95,6 +97,7 @@ namespace PatanWalks.Controllers
         }
 
         [HttpPut("{id}")]
+        [ValidateModel]
         public async Task<ActionResult<DivisionGetDTO>> UpdateDivision([FromRoute] Guid id, [FromBody] DivisionPutDTO updatedDivision)// change due to async
         {
             if (ModelState.IsValid)
