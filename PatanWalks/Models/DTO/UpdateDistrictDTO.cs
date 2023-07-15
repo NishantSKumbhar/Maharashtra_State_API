@@ -1,4 +1,6 @@
-﻿namespace PatanWalks.Models.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PatanWalks.Models.DTO
 {
     public class UpdateDistrictDTO
     {
