@@ -91,68 +91,84 @@ namespace PatanWalks.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DistrictPostDTO addDistrictDTO) 
         {
-            //var districtModel = new District
-            //{
+            if (ModelState.IsValid)
+            {
+                //var districtModel = new District
+                //{
 
-            //    Name = addDistrictDTO.Name,
-            //    Description = addDistrictDTO.Description,
-            //    DistrictImageUrl = addDistrictDTO.DistrictImageUrl,
-            //    AreaInSqKm = addDistrictDTO.AreaInSqKm,
-            //    DivisionId = addDistrictDTO.DivisionId,
-            //    PopulationId = addDistrictDTO.PopulationId
-            //};
-            var districtModel = mapper.Map<District>(addDistrictDTO);
+                //    Name = addDistrictDTO.Name,
+                //    Description = addDistrictDTO.Description,
+                //    DistrictImageUrl = addDistrictDTO.DistrictImageUrl,
+                //    AreaInSqKm = addDistrictDTO.AreaInSqKm,
+                //    DivisionId = addDistrictDTO.DivisionId,
+                //    PopulationId = addDistrictDTO.PopulationId
+                //};
+                var districtModel = mapper.Map<District>(addDistrictDTO);
 
-            //await dbContext.Districts.AddAsync(districtModel);
-            //await dbContext.SaveChangesAsync();
-            var district = await districtRepository.PostDistrictAsync(districtModel);
-            var districtDto = mapper.Map<DistrictDTO>(district);
-            //var districtDto = new DistrictDTO
-            //{
-            //    Id = districtModel.Id,
-            //    Name = districtModel.Name,
-            //    Description = districtModel.Description,
-            //    DistrictImageUrl = districtModel.DistrictImageUrl,
-            //    AreaInSqKm = districtModel.AreaInSqKm,
-            //    DivisionId = districtModel.DivisionId,
-            //    PopulationId = districtModel.PopulationId
-            //};
+                //await dbContext.Districts.AddAsync(districtModel);
+                //await dbContext.SaveChangesAsync();
+                var district = await districtRepository.PostDistrictAsync(districtModel);
+                var districtDto = mapper.Map<DistrictDTO>(district);
+                //var districtDto = new DistrictDTO
+                //{
+                //    Id = districtModel.Id,
+                //    Name = districtModel.Name,
+                //    Description = districtModel.Description,
+                //    DistrictImageUrl = districtModel.DistrictImageUrl,
+                //    AreaInSqKm = districtModel.AreaInSqKm,
+                //    DivisionId = districtModel.DivisionId,
+                //    PopulationId = districtModel.PopulationId
+                //};
 
-            return CreatedAtAction(nameof(GetDistrictById), new { id = districtDto.Id }, districtDto);
+                return CreatedAtAction(nameof(GetDistrictById), new { id = districtDto.Id }, districtDto);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+            
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateDistrictDTO updatedDistrict)
         {
-            var district = mapper.Map<District>(updatedDistrict);
-            var districtModel = await districtRepository.UpdateDistrictAsync(id, district);
-
-            if(districtModel == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                var district = mapper.Map<District>(updatedDistrict);
+                var districtModel = await districtRepository.UpdateDistrictAsync(id, district);
+
+                if (districtModel == null)
+                {
+                    return NotFound();
+                }
+
+                //districtModel.Name = updatedDistrict.Name;
+                //districtModel.Description = updatedDistrict.Description;
+                //districtModel.AreaInSqKm = updatedDistrict.AreaInSqKm;
+                //districtModel.DistrictImageUrl = updatedDistrict.DistrictImageUrl;
+                //districtModel.DivisionId = updatedDistrict.DivisionId;
+                //districtModel.PopulationId = updatedDistrict.PopulationId;
+
+                //dbContext.SaveChanges();
+                var DistrictDTO = mapper.Map<DistrictDTO>(districtModel);
+                //var DistrictDTO = new DistrictDTO
+                //{
+                //    Id = districtModel.Id,
+                //    Name = districtModel.Name,
+                //    Description = districtModel.Description,
+                //    DistrictImageUrl = districtModel.DistrictImageUrl,
+                //    DivisionId = updatedDistrict.DivisionId,
+                //    PopulationId = updatedDistrict.PopulationId,
+                //    AreaInSqKm = districtModel.AreaInSqKm
+                //};
+                // Always pass DTO , Not Domain Model
+                return Ok(DistrictDTO);
             }
-
-            //districtModel.Name = updatedDistrict.Name;
-            //districtModel.Description = updatedDistrict.Description;
-            //districtModel.AreaInSqKm = updatedDistrict.AreaInSqKm;
-            //districtModel.DistrictImageUrl = updatedDistrict.DistrictImageUrl;
-            //districtModel.DivisionId = updatedDistrict.DivisionId;
-            //districtModel.PopulationId = updatedDistrict.PopulationId;
-
-            //dbContext.SaveChanges();
-            var DistrictDTO = mapper.Map<DistrictDTO>(districtModel);
-            //var DistrictDTO = new DistrictDTO
-            //{
-            //    Id = districtModel.Id,
-            //    Name = districtModel.Name,
-            //    Description = districtModel.Description,
-            //    DistrictImageUrl = districtModel.DistrictImageUrl,
-            //    DivisionId = updatedDistrict.DivisionId,
-            //    PopulationId = updatedDistrict.PopulationId,
-            //    AreaInSqKm = districtModel.AreaInSqKm
-            //};
-            // Always pass DTO , Not Domain Model
-            return Ok(DistrictDTO);
+            else
+            {
+                return BadRequest(ModelState);
+            }
+            
         }
 
         [HttpDelete("{id}")]

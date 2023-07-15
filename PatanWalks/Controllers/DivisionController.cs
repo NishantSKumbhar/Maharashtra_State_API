@@ -66,53 +66,69 @@ namespace PatanWalks.Controllers
         [HttpPost]
         public async Task<ActionResult> PostDivision([FromBody] DivisionPostDTO newDivision)// change due to async
         {
-            var divisionModel = new Division
+            if (ModelState.IsValid)
             {
-                Name = newDivision.Name,
-                Code = newDivision.Code,
-                DivisionImageUrl= newDivision.DivisionImageUrl
-            };
+                var divisionModel = new Division
+                {
+                    Name = newDivision.Name,
+                    Code = newDivision.Code,
+                    DivisionImageUrl = newDivision.DivisionImageUrl
+                };
 
-            var division = await divisionRepository.PostDivisionAsync(divisionModel);// change due to async
-            //await maharashtraDbContext.SaveChangesAsync();// change due to async
+                var division = await divisionRepository.PostDivisionAsync(divisionModel);// change due to async
+                                                                                         //await maharashtraDbContext.SaveChangesAsync();// change due to async
 
-            var divisionDTO = new DivisionGetDTO()
+                var divisionDTO = new DivisionGetDTO()
+                {
+                    Name = division.Name,
+                    Code = division.Code,
+                    DivisionImageUrl = division.DivisionImageUrl
+                };
+
+                return CreatedAtAction(nameof(GetDivisionByID), new { id = divisionModel.Id }, divisionDTO);
+            }
+            else
             {
-                Name = division.Name,
-                Code = division.Code,
-                DivisionImageUrl= division.DivisionImageUrl
-            };
-
-            return CreatedAtAction(nameof(GetDivisionByID), new { id = divisionModel.Id }, divisionDTO);
+                return BadRequest(ModelState);
+            }
+            
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<DivisionGetDTO>> UpdateDivision([FromRoute] Guid id, [FromBody] DivisionPutDTO updatedDivision)// change due to async
         {
-            var divisionModel = new Division
+            if (ModelState.IsValid)
             {
-                Code = updatedDivision.Code,
-                Name = updatedDivision.Name,
-                DivisionImageUrl = updatedDivision.DivisionImageUrl
-            };
-            var division = await divisionRepository.UpdateDivisionAsync(id, divisionModel);// change due to async
-            if (division == null)
-            {
-                return NotFound();
+                var divisionModel = new Division
+                {
+                    Code = updatedDivision.Code,
+                    Name = updatedDivision.Name,
+                    DivisionImageUrl = updatedDivision.DivisionImageUrl
+                };
+                var division = await divisionRepository.UpdateDivisionAsync(id, divisionModel);// change due to async
+                if (division == null)
+                {
+                    return NotFound();
+                }
+                //division.Name = updatedDivision.Name;
+                //division.Code = updatedDivision.Code;
+                //division.DivisionImageUrl = updatedDivision.DivisionImageUrl;
+
+                //await maharashtraDbContext.SaveChangesAsync();// change due to async
+
+                var divisionDTO = new DivisionGetDTO()
+                {
+                    Name = division.Name,
+                    Code = division.Code,
+                    DivisionImageUrl = division.DivisionImageUrl
+                };
+                return Ok(divisionDTO);
             }
-            //division.Name = updatedDivision.Name;
-            //division.Code = updatedDivision.Code;
-            //division.DivisionImageUrl = updatedDivision.DivisionImageUrl;
-
-            //await maharashtraDbContext.SaveChangesAsync();// change due to async
-
-            var divisionDTO = new DivisionGetDTO()
+            else
             {
-                Name = division.Name,
-                Code = division.Code,
-                DivisionImageUrl= division.DivisionImageUrl
-            };
-            return Ok(divisionDTO);
+                return BadRequest(ModelState);
+            }
+            
         }
 
         [HttpDelete("{id}")]
