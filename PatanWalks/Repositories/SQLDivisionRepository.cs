@@ -13,9 +13,24 @@ namespace PatanWalks.Repositories
         }
 
         
-        public async Task<List<Division>> GetAllDivisionsAsync()
+        public async Task<List<Division>> GetAllDivisionsAsync(string? filterOn = null, string? filterQuery = null)
         {
-            return await maharashtraDbContext.Divisions.ToListAsync();
+            // Make IQueryable
+            var divisions = maharashtraDbContext.Divisions.AsQueryable();
+
+            // Filter
+            if(string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery))
+            {
+                // first check on which colum, you can make on different columns. 
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    divisions = divisions.Where(x => x.Name.Contains(filterQuery));
+                }
+
+                
+            }
+            return await divisions.ToListAsync();
+            //return await maharashtraDbContext.Divisions.ToListAsync();
         }
 
         public async Task<Division?> GetDivisionByIdAsync(Guid id)

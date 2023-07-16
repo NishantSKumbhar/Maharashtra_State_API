@@ -23,13 +23,19 @@ namespace PatanWalks.Controllers
             this.divisionRepository = divisionRepo;
             this.mapper = mapper;
         }
+
+        // For Filtering ..filterOn = column name, fileterQuery = actualt string enter by user in search box
+        // both are nullable
+        //api/District?fileron=Name&filterQuery="Pune"
         [HttpGet]
-        public async Task<ActionResult<List<DivisionGetDTO>>> GetAllDivisions()  // change due to async
+        public async Task<ActionResult<List<DivisionGetDTO>>> GetAllDivisions([FromQuery] string? filterOn, [FromQuery] string? filterQuery)  // change due to async
         {
             //var DivisionDTO = new List<DivisionGetDTO>();
 
             //var Divisions = await maharashtraDbContext.Divisions.ToListAsync();// change due to async
-            var Divisions = await divisionRepository.GetAllDivisionsAsync();
+            
+            // we have to pass that parameter to repository.
+            var Divisions = await divisionRepository.GetAllDivisionsAsync(filterOn, filterQuery);
             //foreach (var Division in Divisions) 
             //{
             //    DivisionDTO.Add(new DivisionGetDTO
