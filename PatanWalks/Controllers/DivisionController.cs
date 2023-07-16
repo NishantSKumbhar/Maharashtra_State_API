@@ -27,15 +27,19 @@ namespace PatanWalks.Controllers
         // For Filtering ..filterOn = column name, fileterQuery = actualt string enter by user in search box
         // both are nullable
         //api/District?fileron=Name&filterQuery="Pune"
+        // now also implement sorting
+        //api/District?fileron=Name&filterQuery="Pune"&sortby="Name"&isAsending=true
+        // remember that sorting , filtering parameters should be nullable, so think.
         [HttpGet]
-        public async Task<ActionResult<List<DivisionGetDTO>>> GetAllDivisions([FromQuery] string? filterOn, [FromQuery] string? filterQuery)  // change due to async
+        public async Task<ActionResult<List<DivisionGetDTO>>> GetAllDivisions(
+            [FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending)  // change due to async
         {
             //var DivisionDTO = new List<DivisionGetDTO>();
 
             //var Divisions = await maharashtraDbContext.Divisions.ToListAsync();// change due to async
             
             // we have to pass that parameter to repository.
-            var Divisions = await divisionRepository.GetAllDivisionsAsync(filterOn, filterQuery);
+            var Divisions = await divisionRepository.GetAllDivisionsAsync(filterOn, filterQuery, sortBy, isAscending);
             //foreach (var Division in Divisions) 
             //{
             //    DivisionDTO.Add(new DivisionGetDTO

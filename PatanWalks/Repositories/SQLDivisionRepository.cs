@@ -13,7 +13,7 @@ namespace PatanWalks.Repositories
         }
 
         
-        public async Task<List<Division>> GetAllDivisionsAsync(string? filterOn = null, string? filterQuery = null)
+        public async Task<List<Division>> GetAllDivisionsAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? isAscending = true)
         {
             // Make IQueryable
             var divisions = maharashtraDbContext.Divisions.AsQueryable();
@@ -29,6 +29,20 @@ namespace PatanWalks.Repositories
 
                 
             }
+
+            // Sorting
+            if(string.IsNullOrWhiteSpace(sortBy) == false)
+            {
+                if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    divisions = (bool)isAscending ? divisions.OrderBy(x => x.Name) : divisions.OrderByDescending(x => x.Name);
+                }
+                else if (sortBy.Equals("Code", StringComparison.OrdinalIgnoreCase))
+                {
+                    divisions = (bool)isAscending ? divisions.OrderBy(x => x.Code) : divisions.OrderByDescending(x => x.Code);
+                }
+            }
+
             return await divisions.ToListAsync();
             //return await maharashtraDbContext.Divisions.ToListAsync();
         }
