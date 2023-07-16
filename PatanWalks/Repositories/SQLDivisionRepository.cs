@@ -13,7 +13,7 @@ namespace PatanWalks.Repositories
         }
 
         
-        public async Task<List<Division>> GetAllDivisionsAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? isAscending = true)
+        public async Task<List<Division>> GetAllDivisionsAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 10)
         {
             // Make IQueryable
             var divisions = maharashtraDbContext.Divisions.AsQueryable();
@@ -35,15 +35,19 @@ namespace PatanWalks.Repositories
             {
                 if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
                 {
-                    divisions = (bool)isAscending ? divisions.OrderBy(x => x.Name) : divisions.OrderByDescending(x => x.Name);
+                    divisions = isAscending ? divisions.OrderBy(x => x.Name) : divisions.OrderByDescending(x => x.Name);
                 }
                 else if (sortBy.Equals("Code", StringComparison.OrdinalIgnoreCase))
                 {
-                    divisions = (bool)isAscending ? divisions.OrderBy(x => x.Code) : divisions.OrderByDescending(x => x.Code);
+                    divisions = isAscending ? divisions.OrderBy(x => x.Code) : divisions.OrderByDescending(x => x.Code);
                 }
             }
 
-            return await divisions.ToListAsync();
+            // Pagination
+            var skipResult = (pageNumber - 1) * pageSize;
+
+            //return await divisions.ToListAsync();
+            return await divisions.Skip(skipResult).Take((int)pageSize).ToListAsync();
             //return await maharashtraDbContext.Divisions.ToListAsync();
         }
 

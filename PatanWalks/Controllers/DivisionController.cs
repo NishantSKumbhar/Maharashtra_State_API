@@ -28,18 +28,22 @@ namespace PatanWalks.Controllers
         // both are nullable
         //api/District?fileron=Name&filterQuery="Pune"
         // now also implement sorting
-        //api/District?fileron=Name&filterQuery="Pune"&sortby="Name"&isAsending=true
+        // api/District?fileron=Name&filterQuery="Pune"&sortby="Name"&isAsending=true
         // remember that sorting , filtering parameters should be nullable, so think.
+        // now pagination
+        // api/District?fileron=Name&filterQuery="Pune"&sortby="Name"&isAsending=true&pageNumber=1&pageSize10
         [HttpGet]
         public async Task<ActionResult<List<DivisionGetDTO>>> GetAllDivisions(
-            [FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending)  // change due to async
+            [FromQuery] string? filterOn, [FromQuery] string? filterQuery, 
+            [FromQuery] string? sortBy, [FromQuery] bool? isAscending,
+            [FromQuery] int? pageNumber=1, [FromQuery] int? pageSize=10)  // change due to async
         {
             //var DivisionDTO = new List<DivisionGetDTO>();
 
             //var Divisions = await maharashtraDbContext.Divisions.ToListAsync();// change due to async
             
             // we have to pass that parameter to repository.
-            var Divisions = await divisionRepository.GetAllDivisionsAsync(filterOn, filterQuery, sortBy, isAscending);
+            var Divisions = await divisionRepository.GetAllDivisionsAsync(filterOn, filterQuery, sortBy, isAscending, pageNumber, pageSize);
             //foreach (var Division in Divisions) 
             //{
             //    DivisionDTO.Add(new DivisionGetDTO
