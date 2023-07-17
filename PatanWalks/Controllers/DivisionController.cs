@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ namespace PatanWalks.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DivisionController : ControllerBase
     {
         private readonly MaharashtraDbContext maharashtraDbContext;
@@ -33,6 +35,7 @@ namespace PatanWalks.Controllers
         // now pagination
         // api/District?fileron=Name&filterQuery="Pune"&sortby="Name"&isAsending=true&pageNumber=1&pageSize10
         [HttpGet]
+        
         public async Task<ActionResult<List<DivisionGetDTO>>> GetAllDivisions(
             [FromQuery] string? filterOn, [FromQuery] string? filterQuery, 
             [FromQuery] string? sortBy, [FromQuery] bool isAscending,
