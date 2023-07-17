@@ -35,8 +35,8 @@ namespace PatanWalks.Controllers
         [HttpGet]
         public async Task<ActionResult<List<DivisionGetDTO>>> GetAllDivisions(
             [FromQuery] string? filterOn, [FromQuery] string? filterQuery, 
-            [FromQuery] string? sortBy, [FromQuery] bool? isAscending,
-            [FromQuery] int? pageNumber=1, [FromQuery] int? pageSize=10)  // change due to async
+            [FromQuery] string? sortBy, [FromQuery] bool isAscending,
+            [FromQuery] int pageNumber=1, [FromQuery] int pageSize=10)  // change due to async
         {
             //var DivisionDTO = new List<DivisionGetDTO>();
 
